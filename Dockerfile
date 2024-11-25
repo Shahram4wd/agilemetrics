@@ -35,4 +35,4 @@ EXPOSE 8000
 
 # Use the entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "agilemetrics.wsgi:application"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:$PORT agilemetrics.wsgi:application"]
