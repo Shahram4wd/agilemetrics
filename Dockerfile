@@ -14,22 +14,25 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install them
+# Create a virtual environment and install dependencies
+RUN python -m venv /venv
+ENV PATH="/venv/bin:$PATH"
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Django project into the container
 COPY . /app/
 
+# Copy and use entrypoint script
+COPY entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
+
 # Expose the port Django will run on
 EXPOSE 8000
 
-# Add this line after copying your code
-#COPY entrypoint.sh /app/
-
-# Run migrations and start the server
-#ENTRYPOINT ["/app/entrypoint.sh"]
-#CMD ["gunicorn", "--bind", "0.0.0.0:8000", "agilemetrics.wsgi:application"]
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+# Use the entrypoint script
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "agilemetrics.wsgi:application"]
