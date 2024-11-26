@@ -17,22 +17,15 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a virtual environment and install dependencies
-RUN python -m venv /venv
-ENV PATH="/venv/bin:$PATH"
+# Install dependencies
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Django project into the container
 COPY . /app/
 
-# Copy and use entrypoint script
-COPY entrypoint.sh /app/
-RUN chmod +x /app/entrypoint.sh
-
 # Expose the port Django will run on
 EXPOSE 8000
 
-# Use the entrypoint script
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Command to run the application
 CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:$PORT agilemetrics.wsgi:application"]
