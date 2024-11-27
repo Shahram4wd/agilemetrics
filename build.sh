@@ -1,19 +1,11 @@
 #!/usr/bin/env bash
-# Exit on error
+# exit on error
 set -o errexit
+python -m pip install --upgrade pip
 
-# Create and activate a virtual environment
-python -m venv /opt/render/project/.venv
-source /opt/render/project/.venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pip install --force-reinstall -U setuptools
 
-# Upgrade pip to the latest version
-pip install --upgrade pip
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Collect static files
 python manage.py collectstatic --no-input
-
-# Apply database migrations
+python manage.py makemigrations
 python manage.py migrate

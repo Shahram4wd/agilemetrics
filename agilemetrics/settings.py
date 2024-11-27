@@ -26,13 +26,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$_y%ibi3(*9q0t&7+6p+&qo+nj4pwt4p-=&m2a-rrj#ddm6cj('
-
+##SECRET_KEY = 'django-insecure-$_y%ibi3(*9q0t&7+6p+&qo+nj4pwt4p-=&m2a-rrj#ddm6cj('
+SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'RENDER' not in os.environ
+##DEBUG = True
 
-ALLOWED_HOSTS = []
-
+##ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:    
+		ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 
@@ -92,9 +96,8 @@ WSGI_APPLICATION = 'agilemetrics.wsgi.application'
 #}
 
 DATABASES = {
-    "default": dj_database_url.config(default=env('POSTGRES_URL'), conn_max_age=1800),
+    "default": dj_database_url.config(default=env('postgres://admin:16FGZs4xXNos6G6K72TFRkw1d8F6Dgtw@dpg-ct2cld2j1k6c73ckjs2g-a.oregon-postgres.render.com/agile_metrics'), conn_max_age=1800),
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
