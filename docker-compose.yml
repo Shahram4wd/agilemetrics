@@ -1,30 +1,22 @@
-version: '3.9'
+databases:
+  - name: agile_metrics
+    plan: free
+    databaseName: agile_metrics
+    user: agilemetrics
 
 services:
-  db:
-    image: postgres:16
-    restart: always
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - .env
-    ports:
-      - "5432:5432"
-
-  web:
-    build: .
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             gunicorn --bind 0.0.0.0:8000 agilemetrics.wsgi:application"
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-    env_file:
-      - .env
-
-volumes:
-  postgres_data:
+  - type: web
+    plan: free
+    name: agilemetrics
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn agilemetrics.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: POSTGRES_URL
+        fromDatabase:
+          name: agile_metrics
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4

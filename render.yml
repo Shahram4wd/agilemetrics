@@ -10,7 +10,7 @@ services:
     name: agilemetrics
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn agilemetrics.asgi:application"
+    startCommand: "python -m gunicorn agilemetrics.asgi:application -k uvicorn.workers.UvicornWorker"
     envVars:
       - key: POSTGRES_URL
         fromDatabase:
