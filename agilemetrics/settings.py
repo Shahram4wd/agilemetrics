@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'agilemetrics.wsgi.application'
 #}
 
 DATABASES = {
-    "default": dj_database_url.config(default=env('postgres://admin:16FGZs4xXNos6G6K72TFRkw1d8F6Dgtw@dpg-ct2cld2j1k6c73ckjs2g-a.oregon-postgres.render.com/agile_metrics'), conn_max_age=1800),
+    "default": dj_database_url.config(default=env('POSTGRES_URL'), conn_max_age=1800),
 }
 
 # Password validation
